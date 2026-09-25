@@ -1,6 +1,6 @@
 # PokeAPI Java API Automation
 
-A small Java 21 and Maven project for learning API test automation against the public [PokeAPI](https://pokeapi.co/). Tests use JUnit 5 and follow the repository's BABELL flow. Rest Assured is kept behind the API and `Helper` classes. Cucumber is not used.
+A Java 21 and Maven API automation project for the public [PokeAPI](https://pokeapi.co/). Each scenario is defined in its own Gherkin feature and executed by a dedicated Cucumber JUnit Platform suite. Rest Assured remains behind the BABELL API and `Helper` layers.
 
 ## Requirements
 
@@ -15,68 +15,60 @@ java -version
 mvn -version
 ```
 
-## Run the tests
+## Run the scenarios
 
-Run the complete suite from the directory containing `pom.xml`:
-
-```shell
-mvn test
-```
-
-Run a single numbered scenario from the same root directory:
-
-```shell
-mvn -Dtest=PK_001_API_TEST test
-mvn -Dtest=PK_002_API_TEST test
-mvn -Dtest=PK_003_API_TEST test
-mvn -Dtest=PK_004_API_TEST test
-mvn -Dtest=PK_005_API_TEST test
-mvn -Dtest=PK_006_API_TEST test
-mvn -Dtest=PK_007_API_TEST test
-```
-
-Clean compiled output and run the suite again:
+Run the complete suite:
 
 ```shell
 mvn clean test
 ```
 
-Surefire is configured in `pom.xml` to discover tests named `PK_*_API_TEST`. No `package.json` or Node.js setup is needed for this Maven project.
+Run one PK scenario by its runner class:
 
-## Scenarios
-
-| Test | Coverage |
-|------|----------|
-| `PK_001_API_TEST` | Request Pikachu by name; check its name and HTTP 200. |
-| `PK_002_API_TEST` | Request Pokémon ID 25; check Pikachu, ID 25, and HTTP 200. |
-| `PK_003_API_TEST` | Request an unknown Pokémon and check HTTP 404. |
-| `PK_004_API_TEST` | Check Pikachu's response fields and required abilities, types, and stats. |
-| `PK_005_API_TEST` | Check Bulbasaur has grass and poison types. |
-| `PK_006_API_TEST` | Check Pikachu has the static ability. |
-| `PK_007_API_TEST` | Check HTTP 200 and the JSON response content type. |
-
-## Project structure
-
-```text
-src/
-├── main/java/com/caynan/qa/
-│   ├── api/       # PokeAPI endpoint operations
-│   ├── types/     # RequestType and typed PokemonResponse data
-│   └── utils/     # Shared HTTP and response operations
-└── test/java/
-    ├── api/       # Small numbered JUnit scenario classes
-    └── test_steps/ # BDD steps and shared reusable test operations
+```shell
+mvn test -Dtest=PK_005_API_TEST
 ```
 
-The tests call BDD-style methods in their Steps classes. Reusable operations keep the response state, call `PokemonAPI` and `Helper`, and use `PokemonResponse` for typed field checks. Tests do not build HTTP requests with Rest Assured.
+Or select a scenario by its Cucumber tag:
+
+```shell
+mvn test -Dcucumber.filter.tags="@PK_005"
+```
+
+## Scenario structure
+
+Each PK has exactly one feature file and one isolated Java Test Definition:
+
+```text
+src/test/resources/features/PK_001_API_TEST.feature
+src/test/java/tests/pk001/PK_001_API_TEST.java
+src/test/java/steps/PokemonApiReusableSteps.java
+```
+
+The same layout applies to PK_002 through PK_007. Each feature contains only its corresponding scenario. Each Test Definition combines JUnit Platform suite metadata with that PK's Cucumber bindings, and selects only its feature and matching `tests.pkNNN` glue package. Similar Gherkin phrases can be reused without loading other tests' bindings.
+
+The Test Definition contains only scenario vocabulary and delegates to `PokemonApiReusableSteps`. That reusable BABELL layer owns response state and assertions, calls `PokemonAPI`, then uses `Helper` for HTTP handling. Rest Assured remains in `Helper`.
+
+```text
+PK feature → PK-specific Test Definition → PokemonApiReusableSteps → PokemonAPI → Helper → Rest Assured
+```
+
+Surefire discovers the seven `PK_*_API_TEST` suite classes in `tests.pk001` through `tests.pk007`. They are Cucumber Test Definitions, not JUnit `@Test` scenario copies. `mvn test -Dtest=PK_005_API_TEST` therefore runs only PK_005.
+
+## Scenario coverage
+
+| Runner / tag | Coverage |
+|--------------|----------|
+| `PK_001_API_TEST` / `@PK_001` | Request Pikachu by name; check name and HTTP 200. |
+| `PK_002_API_TEST` / `@PK_002` | Request Pokémon ID 25; check Pikachu, ID 25, and HTTP 200. |
+| `PK_003_API_TEST` / `@PK_003` | Request an unknown Pokémon; check HTTP 404. |
+| `PK_004_API_TEST` / `@PK_004` | Check the Pokémon response contract. |
+| `PK_005_API_TEST` / `@PK_005` | Check Bulbasaur has grass and poison types. |
+| `PK_006_API_TEST` / `@PK_006` | Check Pikachu has the static ability. |
+| `PK_007_API_TEST` / `@PK_007` | Check HTTP 200 and JSON content type. |
 
 ## Dependencies
 
-The Maven dependencies and Java version are declared in `pom.xml`:
+Maven declares Java 21, JUnit Jupiter 5, the JUnit Platform Suite, Cucumber Java, Cucumber's JUnit Platform engine, REST Assured, and Jackson Databind in `pom.xml`.
 
-- Java 21
-- JUnit Jupiter 5
-- REST Assured
-- Jackson Databind for mapping JSON into `PokemonResponse`
-
-The suite calls the live PokeAPI, so network outages or API availability can affect test results.
+The scenarios call the live PokeAPI, so network outages or API availability can affect test results.

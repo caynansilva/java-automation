@@ -1,4 +1,4 @@
-package test_steps;
+package steps;
 
 import com.caynan.qa.api.PokemonAPI;
 import com.caynan.qa.types.PokemonResponse;
