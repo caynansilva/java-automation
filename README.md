@@ -55,6 +55,26 @@ PK feature → PK-specific Test Definition → PokemonApiReusableSteps → Pokem
 
 Surefire discovers the seven `PK_*_API_TEST` suite classes in `tests.pk001` through `tests.pk007`. They are Cucumber Test Definitions, not JUnit `@Test` scenario copies. `mvn test -Dtest=PK_005_API_TEST` therefore runs only PK_005.
 
+## Using BABELL with AI Coding Agents
+
+This repository includes small Agent Skills that teach supported coding agents how to work within the BABELL architecture:
+
+| Skill | Purpose |
+|---|---|
+| [`babell-create-api-test`](skills/babell-create-api-test/SKILL.md) | Create a complete API test from a behavior requirement. |
+| [`babell-create-reusable-step`](skills/babell-create-reusable-step/SKILL.md) | Add shared behavior at the correct reusable layer. |
+| [`babell-review-test`](skills/babell-review-test/SKILL.md) | Review tests for architecture and maintainability without editing them. |
+
+For example, ask:
+
+> Create a BABELL API test that verifies Bulbasaur has the ability "overgrow".
+
+The test-creation skill inspects existing reusable capabilities and creates one feature and one Test Definition, such as `PK_008_API_TEST.feature` and `tests/pk008/PK_008_API_TEST.java`.
+
+### Agent architecture rule
+
+One Test, One Feature, One Test Definition. Shared behavior belongs below the Test Definition. Agents must not create global Step Definition classes, per-test `*_STEPS.java` files, multiple unrelated scenarios in one feature, direct Rest Assured calls in Test Definitions, or duplicate behavior when a reusable BABELL capability already exists.
+
 ## Scenario coverage
 
 | Runner / tag | Coverage |

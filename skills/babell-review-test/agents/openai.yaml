@@ -1,0 +1,4 @@
+interface:
+  display_name: "BABELL Review Test"
+  short_description: "Review BABELL tests for isolation and reuse"
+  default_prompt: "Use $babell-review-test to review these BABELL tests."

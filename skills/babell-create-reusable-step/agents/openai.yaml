@@ -1,0 +1,4 @@
+interface:
+  display_name: "BABELL Add Reusable Step"
+  short_description: "Add shared BABELL behavior at the correct API layer"
+  default_prompt: "Use $babell-create-reusable-step to add a reusable capability."

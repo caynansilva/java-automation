@@ -1,0 +1,4 @@
+interface:
+  display_name: "BABELL Create API Test"
+  short_description: "Create an isolated BABELL API test from a requirement"
+  default_prompt: "Use $babell-create-api-test to create an API test for a stated behavior."

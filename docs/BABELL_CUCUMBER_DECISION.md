@@ -1,5 +1,7 @@
 # BABELL Cucumber Test Architecture
 
+> **Superseded architecture record:** This document records the earlier three-artifact design with a separate runner and per-test binding class. The current rule is **One Test, One Feature, One Test Definition**: suite metadata and that PK's Cucumber bindings live together in `tests.pkNNN/PK_NNN_API_TEST.java`. See [BABELL_CUCUMBER_MAVEN_ARCHITECTURE.md](BABELL_CUCUMBER_MAVEN_ARCHITECTURE.md) for the current source of truth. This document is retained for historical context.
+
 ## Objective
 
 The BABELL test architecture is designed around a simple principle:
