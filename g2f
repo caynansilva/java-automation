@@ -1,0 +1,11 @@
+#!/bin/sh
+set -eu
+cd "$(dirname "$0")"
+
+exec_args=
+for argument in "$@"; do
+  escaped=$(printf '%s' "$argument" | sed 's/\\/\\\\/g; s/"/\\"/g')
+  exec_args="$exec_args \"$escaped\""
+done
+
+exec mvn -q -DskipTests compile exec:java "-Dexec.args=$exec_args"

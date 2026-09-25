@@ -53,6 +53,45 @@ The Test Definition contains only scenario vocabulary and delegates to `PokemonA
 PK feature → PK-specific Test Definition → PokemonApiReusableSteps → PokemonAPI → Helper → Rest Assured
 ```
 
+## Gherkin to Functions (G2F)
+
+G2F generates one PK-specific Java Test Definition from each existing feature:
+
+```text
+.feature
+   ↓
+G2F
+   ↓
+PK_xxx_API_TEST.java
+   ↓
+Reusable Steps
+   ↓
+BABELL
+```
+
+Run a single feature, or recursively process a directory:
+
+```shell
+# Windows PowerShell
+.\g2f.cmd src/test/resources/features/PK_008_API_TEST.feature
+.\g2f.cmd --dir src/test/resources/features
+
+# Linux / macOS
+sh ./g2f src/test/resources/features/PK_008_API_TEST.feature
+sh ./g2f --dir src/test/resources/features
+```
+
+To deliberately regenerate an existing Test Definition, pass `--force`:
+
+```shell
+.\g2f.cmd --force src/test/resources/features/PK_008_API_TEST.feature
+sh ./g2f --force src/test/resources/features/PK_008_API_TEST.feature
+```
+
+`--force` replaces the Java file and can destroy manually implemented BABELL delegations. By default, G2F refuses to overwrite an existing Test Definition. Generated bindings throw `UnsupportedOperationException` until connected to reusable BABELL behavior; G2F does not invent test implementation. Supported syntax includes Feature/tags, Background, one Scenario, and Given/When/Then/And/But. Unsupported constructs such as Scenario Outline, Examples, Data Tables, Doc Strings, and Rule are reported with guidance instead of being ignored.
+
+One Test, One Feature, One Test Definition. G2F creates no per-test step classes, global glue, or Rest Assured code.
+
 Surefire discovers the seven `PK_*_API_TEST` suite classes in `tests.pk001` through `tests.pk007`. They are Cucumber Test Definitions, not JUnit `@Test` scenario copies. `mvn test -Dtest=PK_005_API_TEST` therefore runs only PK_005.
 
 ## Using BABELL with AI Coding Agents
